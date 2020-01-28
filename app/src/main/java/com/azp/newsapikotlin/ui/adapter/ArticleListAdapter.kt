@@ -10,12 +10,18 @@ import com.azp.newsapikotlin.toSimpleString
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_article_list.view.*
 
-class ArticleListAdapter(var articleList: List<Article> = ArrayList()):
+class ArticleListAdapter(var articleList: List<Article> = ArrayList()) :
     RecyclerView.Adapter<ArticleListAdapter.ArticleViewHolder>() {
+
+    var mClickListener: ClickListener? = null
+
+    fun setOnClickListener(clickListener: ClickListener) {
+        this.mClickListener = clickListener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
         var view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_article_list,parent,false)
+            .inflate(R.layout.item_article_list, parent, false)
         return ArticleViewHolder(view)
     }
 
@@ -27,16 +33,24 @@ class ArticleListAdapter(var articleList: List<Article> = ArrayList()):
         holder.bindArticle(articleList.get(position))
     }
 
-    fun updateList(article: List<Article>){
+    fun updateList(article: List<Article>) {
         this.articleList = article
         notifyDataSetChanged()
     }
 
-    inner class ArticleViewHolder(itemView: View):
-            RecyclerView.ViewHolder(itemView) {
+    inner class ArticleViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView), View.OnClickListener{
+
+        override fun onClick(v: View?) {
+            mClickListener?.onClick(article)
+        }
 
         private var view: View = itemView
         private lateinit var article: Article
+
+        init {
+            itemView.setOnClickListener(this)
+        }
 
         fun bindArticle(article: Article) {
             this.article = article
@@ -48,5 +62,11 @@ class ArticleListAdapter(var articleList: List<Article> = ArrayList()):
             view.articleDescription.text = article.description
             view.articleDate.text = toSimpleString(article.publishedAt)
         }
+
+
+    }
+
+    interface ClickListener {
+        fun onClick(article: Article)
     }
 }
