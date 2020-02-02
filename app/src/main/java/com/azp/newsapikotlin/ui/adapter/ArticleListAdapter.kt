@@ -62,8 +62,6 @@ class ArticleListAdapter(var articleList: List<Article> = ArrayList()) :
             view.articleDescription.text = article.description
             view.articleDate.text = toSimpleString(article.publishedAt)
         }
-
-
     }
 
     interface ClickListener {
